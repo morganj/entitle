@@ -1,8 +1,8 @@
 group UserDAO;
 
 findByEmail(email) ::= <<
-    SELECT first_name,
-           last_name,
+    SELECT firstName,
+           lastName,
            email
     FROM   user
     WHERE email = :email
@@ -10,8 +10,8 @@ findByEmail(email) ::= <<
 
 addUser() ::=<<
 INSERT INTO user (
-    first_name,
-    last_name,
+    firstName,
+    lastName,
     email
 ) VALUES (
     :firstName,
@@ -20,7 +20,7 @@ INSERT INTO user (
 );
 >>
 
-deleteUser() ::=<<
+removeUser() ::=<<
 DELETE FROM user
 WHERE email = :email
 >>

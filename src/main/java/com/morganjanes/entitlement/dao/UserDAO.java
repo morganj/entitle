@@ -27,7 +27,7 @@ public interface UserDAO {
     public void addUser(@BindBean User user);
 
     @SqlUpdate
-    public void deleteUser(@BindBean User user);
+    public void removeUser(@Bind("email") String id);
 
 
     class UserMapper implements ResultSetMapper<User>
@@ -36,8 +36,8 @@ public interface UserDAO {
         public User map(int index, ResultSet r, StatementContext ctx) throws SQLException
         {
             User user = new User();
-            user.setFirstName(r.getString("first_name"));
-            user.setLastName(r.getString("last_name"));
+            user.setFirstName(r.getString("firstName"));
+            user.setLastName(r.getString("lastName"));
             user.setEmail(r.getString("email"));
             return user;
         }

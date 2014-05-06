@@ -5,17 +5,12 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.jdbi.DBIFactory;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.util.StringMapper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +38,7 @@ public class UserDAOTest {
         this.dbi = factory.build(environment, hsqlConfig, "hsql");
         handle = dbi.open();
         handle.createCall(
-                "CREATE TABLE user ( email varchar(100) primary key, first_name varchar(255), last_name varchar(255))")
+                "CREATE TABLE user ( email varchar(100) primary key, firstName varchar(255), lastName varchar(255))")
                 .invoke();
         userDao = dbi.onDemand(UserDAO.class);
     }
@@ -59,44 +54,33 @@ public class UserDAOTest {
     public void testFindByEmail(){
         populateDb();
         User user = userDao.findByEmail("alice@localhost.io");
-        Assert.assertEquals(user, buildUser("alice@localhost.io", "Alice", "Smith"));
+        Assert.assertEquals(user, new User("alice@localhost.io", "Alice", "Smith"));
     }
 
     @Test
     public void testAddUser(){
-        populateDb();
+        userDao.addUser(new User("alice@localhost.io", "Alice", "Smith"));
         Query<Map<String, Object>> q =
-                handle.createQuery("SELECT first_name FROM user");
+                handle.createQuery("SELECT firstName FROM user");
         Query<String> q2 = q.map(StringMapper.FIRST);
         List<String> rs = q2.list();
-        Assert.assertEquals(rs, Arrays.asList("Alice"));
+        Assert.assertTrue(rs.contains("Alice"));
     }
 
     @Test
-    public void testDeleteUser(){
+    public void testRemoveUser(){
         populateDb();
-        User user = new User();
-        user.setEmail("alice@localhost.io");
-        userDao.deleteUser(user);
+        userDao.removeUser("alice@localhost.io");
         Query<Map<String, Object>> q =
-                handle.createQuery("SELECT first_name FROM user");
+                handle.createQuery("SELECT firstName FROM user");
         Query<String> q2 = q.map(StringMapper.FIRST);
         List<String> rs = q2.list();
-        Assert.assertEquals(rs, new ArrayList());
+        Assert.assertTrue(rs.isEmpty());
     }
 
-    @Test
-    public void testGetAuthTokens(){}
 
     private void populateDb(){
-        userDao.addUser(buildUser("alice@localhost.io", "Alice", "Smith"));
+        userDao.addUser(new User("alice@localhost.io", "Alice", "Smith"));
     }
 
-    private User buildUser(String email, String firstName, String lastName){
-        User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        return user;
-    }
 }

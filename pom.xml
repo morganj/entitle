@@ -43,6 +43,12 @@
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-jdbi</artifactId>
             <version>0.6.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jdbi</groupId>
+                    <artifactId>jdbi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
@@ -64,6 +70,18 @@
             <artifactId>stringtemplate</artifactId>
             <version>3.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.siren4j</groupId>
+            <artifactId>siren4j</artifactId>
+            <version>1.0.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi</artifactId>
+            <version>2.53</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <plugins>

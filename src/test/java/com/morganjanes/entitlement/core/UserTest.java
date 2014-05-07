@@ -18,8 +18,16 @@ public class UserTest {
     public void testNotEquals() {
         User y = new User("john@localhost.io", "John", "Smith");
         User z = new User( "johnny@localhost.io", "John", "Smith");
-        Assert.assertFalse(y.equals(null));
+        Assert.assertFalse(y.equals(""));
         Assert.assertFalse(y.equals(z) && z.equals(y));
         Assert.assertFalse(y.hashCode() == z.hashCode());
+    }
+
+    @Test
+    public void testIsValidPassword(){
+        User user = new User();
+        user.setPassword("asdf");
+        Assert.assertTrue(user.isValidPassword("asdf"));
+
     }
 }

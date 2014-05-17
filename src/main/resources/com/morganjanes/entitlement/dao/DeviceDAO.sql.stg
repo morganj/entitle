@@ -1,0 +1,23 @@
+group DeviceDAO;
+
+getDevicesByAccount(accountId) ::=<<
+    SELECT * FROM Device
+    WHERE account_id = :accountId;
+>>
+
+addDevice() ::=<<
+INSERT INTO device (
+    deviceId,
+    deviceType
+) VALUES (
+    :deviceId,
+    :deviceType
+);
+>>
+
+removeDevice(deviceId) ::=<<
+    DELETE FROM Device
+    WHERE deviceId = :deviceId;
+>>
+
+

@@ -12,9 +12,17 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @UseStringTemplate3StatementLocator
 public interface UserDAO {
+    @SqlUpdate
+    public void createUserTable();
+
+    @SqlQuery
+    @Mapper(UserMapper.class)
+    public List<User> getAllUsers();
+
     @SqlQuery
     @Mapper(UserMapper.class)
     public User findByUserId(@Bind("id") String id);

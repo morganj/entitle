@@ -7,12 +7,8 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.jdbi.DBIFactory;
 import org.junit.*;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.Query;
-import org.skife.jdbi.v2.util.StringMapper;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
@@ -20,8 +16,8 @@ import static org.mockito.Mockito.mock;
 public class UserDAOTest {
     private final DBIFactory factory = new DBIFactory();
     private DBI dbi;
-    private Handle handle;
     private UserDAO userDao;
+    private static User alice;
     private final DatabaseConfiguration hsqlConfig = new DatabaseConfiguration();
     {
         LoggingFactory.bootstrap();
@@ -33,54 +29,50 @@ public class UserDAOTest {
 
     private final Environment environment = mock(Environment.class);
 
+    @BeforeClass
+    public static void init(){
+        alice = new User("alice@localhost.io","Alice", "Smith");
+    }
+
     @Before
     public void setUp() throws Exception {
-        this.dbi = factory.build(environment, hsqlConfig, "hsql");
-        handle = dbi.open();
-        handle.createCall(
-                "CREATE TABLE user ( email varchar(100) primary key, firstName varchar(255), lastName varchar(255))")
-                .invoke();
+        dbi = factory.build(environment, hsqlConfig, "hsql");
         userDao = dbi.onDemand(UserDAO.class);
     }
 
 
     @After
     public void tearDown() throws Exception {
-        this.handle.close();
         this.dbi = null;
     }
 
     @Test
     public void testFindByEmail(){
         populateDb();
-        User user = userDao.findByEmail("alice@localhost.io");
-        Assert.assertEquals(user, new User("alice@localhost.io", "Alice", "Smith"));
+        User user = userDao.findByEmail(alice.getEmail());
+        Assert.assertEquals(user, alice);
     }
 
     @Test
     public void testAddUser(){
-        userDao.addUser(new User("alice@localhost.io", "Alice", "Smith"));
-        Query<Map<String, Object>> q =
-                handle.createQuery("SELECT firstName FROM user");
-        Query<String> q2 = q.map(StringMapper.FIRST);
-        List<String> rs = q2.list();
-        Assert.assertTrue(rs.contains("Alice"));
+        userDao.createUserTable();
+        userDao.addUser(alice);
+        List<User> users = userDao.getAllUsers();
+        Assert.assertTrue(users.contains(alice));
     }
 
     @Test
     public void testRemoveUser(){
         populateDb();
-        userDao.removeUser("alice@localhost.io");
-        Query<Map<String, Object>> q =
-                handle.createQuery("SELECT firstName FROM user");
-        Query<String> q2 = q.map(StringMapper.FIRST);
-        List<String> rs = q2.list();
-        Assert.assertTrue(rs.isEmpty());
+        userDao.removeUser(alice.getEmail());
+        List<User> users = userDao.getAllUsers();
+        Assert.assertFalse(users.contains(alice));
     }
 
 
     private void populateDb(){
-        userDao.addUser(new User("alice@localhost.io", "Alice", "Smith"));
+        userDao.createUserTable();
+        userDao.addUser(alice);
     }
 
 }

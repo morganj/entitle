@@ -1,0 +1,23 @@
+group AccountDAO;
+
+createAccountTable() ::=<<
+  DROP TABLE account IF EXISTS;
+  CREATE TABLE account( accountId varchar(100), dateCreated date);
+>>
+
+getAllAccounts() ::=<<
+    SELECT * FROM account;
+>>
+
+addAccount() ::=<<
+INSERT INTO Account (
+    accountId,
+) VALUES (
+    :accountId
+);
+>>
+
+removeAccount(accountId) ::=<<
+DELETE FROM account
+WHERE accountId = :accountId;
+>>

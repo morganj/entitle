@@ -1,5 +1,18 @@
 group UserDAO;
 
+createUserTable() ::=<<
+    DROP TABLE user IF EXISTS;
+    CREATE TABLE user (
+        email varchar(100) primary key,
+        firstName varchar(255),
+        lastName varchar(255)
+    );
+>>
+
+getAllUsers() ::=<<
+    SELECT * FROM user;
+>>
+
 findByEmail(email) ::= <<
     SELECT firstName,
            lastName,
